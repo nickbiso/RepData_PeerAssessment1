@@ -35,11 +35,13 @@ opts_chunk$set(echo=TRUE)
 1. Load the data (i.e. read.csv()) 
 ```{r}
 dat<-read.csv("activity.csv",stringsAsFactors = FALSE)
+head(dat)
 ```
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 ```{r}
 dat2<-transform(dat, date = as.Date(date, "%Y-%m-%d"))
+head(dat)
 ```
 
 
@@ -61,6 +63,8 @@ hist(stepsperday,col = "red",xlab="Steps Per Day",main = "Histogram Of Steps Tak
 ```{r}
 meansteps<-mean(stepsperday)
 mediansteps<-median(stepsperday)
+```
+```{r, echo=FALSE}
 print(paste("The mean and the median of the total number of steps taken per day are",
             meansteps," and ",mediansteps," respectively"))
 ```
@@ -80,12 +84,15 @@ plot(avesteps$interval,avesteps$steps, type="l", xlab="Interval", ylab="Average 
 
 ```{r}
 maxinterval <- avesteps$interval[which.max(avesteps$steps)]
+print(paste("The 5 minute interval that contains the maximum number of steps is ", maxinterval))
 ```
 
 ###Imputing missing values
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 ```{r}
 totna<-nrow(dat)-nrow(dat2)
+```
+```{r, echo=FALSE}
 print(paste("Total number of NA's is ",totna))
 ```
 
@@ -102,6 +109,7 @@ for(i in 1:nrow(datna)){
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r}
 newdat<-rbind(dat2,datna)
+head(newdat)
 ```
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median 
@@ -111,6 +119,10 @@ assignment? What is the impact of imputing missing data on the estimates of the 
 newstepsperday<-with(newdat,tapply(steps,date,sum))
 hist(newstepsperday,col = "red",xlab="Steps Per Day",main = "Histogram Of Steps Taken Per Day Vs Frequency")
 ```
+```{r, echo=FALSE}
+paste("The new mean number of steps is ", mean(newstepsperday))
+paste("The new median number of steps is ", median(newstepsperday))
+```
 
 
 ###Are there differences in activity patterns between weekdays and weekends?
@@ -119,6 +131,7 @@ indicating whether a given date is a weekday or weekend day.
 ```{r}
 newdat$week<-weekdays(newdat[,2])
 newdat$week<-factor(ifelse(newdat$week %in% c("Saturday","Sunday"),"weekend","weekday"))
+head(newdat)
 ```
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) 
@@ -133,3 +146,12 @@ library(lattice)
 xyplot(final$steps ~ final$interval | final$week, type='l', xlab="Interval", 
        ylab="Number of Steps",layout = c(1,2))
 ```
+
+During the weekend, there is a more consistent pattern of personal movement while during the weekday there is a 
+spike on the first half of the day. They clearly have different patterns of movement which can be caused by the 
+different activities done during the weekday like office work(9-5) and hobbies done during the different times 
+during the weekend.
+
+
+
+
